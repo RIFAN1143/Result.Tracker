@@ -699,40 +699,37 @@
             }
             
             // Add new result
-            resultForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Show loading state
-                submitBtn.innerHTML = '<span class="loading-spinner"></span> Publishing...';
-                submitBtn.disabled = true;
-                
-                const newResult = {
-                    adNo: document.getElementById('adNo').value,
-                    program: document.getElementById('program').value,
-                    wing: document.getElementById('wing').value,
-                    position: document.getElementById('position').value,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                db.collection('results').add(newResult)
-                    .then(docRef => {
-                        // Add the ID to the result object
-                        newResult.id = docRef.id;
-                        results.push(newResult);
-                        
-                        renderResults();
-                        resultForm.reset();
-                        showNotification('Result published successfully!', 'success');
-                    })
-                    .catch(error => {
-                        showNotification('Error publishing result: ' + error.message, 'error');
-                    })
-                    .finally(() => {
-                        // Reset button state
-                        submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Publish Result';
-                        submitBtn.disabled = false;
-                    });
-            });
+resultForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Show loading state
+    submitBtn.innerHTML = '<span class="loading-spinner"></span> Publishing...';
+    submitBtn.disabled = true;
+    
+    const newResult = {
+        adNo: document.getElementById('adNo').value,
+        program: document.getElementById('program').value,
+        wing: document.getElementById('wing').value,
+        position: document.getElementById('position').value,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    db.collection('results').add(newResult)
+        .then(docRef => {
+            // Don't manually add to the local array or call renderResults here
+            // The real-time listener will handle updating the UI
+            resultForm.reset();
+            showNotification('Result published successfully!', 'success');
+        })
+        .catch(error => {
+            showNotification('Error publishing result: ' + error.message, 'error');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Publish Result';
+            submitBtn.disabled = false;
+        });
+});
             
             // Delete result
             function deleteResult(id) {
@@ -800,5 +797,6 @@
 </body>
 
 </html>
+
 
 
